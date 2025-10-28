@@ -1,0 +1,473 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Por qué te amo</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;600;800&family=Great+Vibes&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg1: #ff9a9e;
+      --bg2: #fecfef;
+      --card-bg: rgba(255,255,255,0.85);
+      --accent: #ff6b81;
+      --text: #2b2b2b;
+    }
+
+    /* Reset ligero */
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%}
+    body{
+      font-family: "Montserrat", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      color:var(--text);
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background: linear-gradient(120deg,var(--bg1), var(--bg2));
+      overflow:hidden;
+    }
+
+    /* Animación de degradado sutil */
+    @keyframes gradientShift {
+      0% {filter: hue-rotate(0deg) saturate(1);}
+      50% {filter: hue-rotate(20deg) saturate(1.05);}
+      100% {filter: hue-rotate(0deg) saturate(1);}
+    }
+    .bg-overlay{
+      position:fixed;
+      inset:0;
+      background: linear-gradient(120deg, rgba(255,154,158,0.15), rgba(254,207,239,0.15));
+      animation: gradientShift 12s ease-in-out infinite;
+      pointer-events:none;
+      z-index:0;
+      mix-blend-mode: overlay;
+    }
+
+    /* Corazones flotantes */
+    .hearts {
+      position:fixed;
+      inset:0;
+      z-index:0;
+      pointer-events:none;
+      overflow:hidden;
+    }
+    .heart{
+      position:absolute;
+      width:28px;
+      height:28px;
+      transform:translateY(100vh) rotate(0deg);
+      opacity:0.9;
+      animation: floatUp linear forwards;
+    }
+
+    @keyframes floatUp {
+      0% { transform: translateY(110vh) scale(0.6) rotate(0deg); opacity:0;}
+      10% { opacity:0.9 }
+      100% { transform: translateY(-20vh) scale(1.2) rotate(360deg); opacity:0.95; }
+    }
+
+    /* Tarjeta central */
+    .card {
+      position:relative;
+      z-index:2;
+      width:min(920px, 94vw);
+      max-width:1000px;
+      background:var(--card-bg);
+      border-radius:20px;
+      padding:32px;
+      box-shadow: 0 10px 40px rgba(20,20,30,0.12);
+      display:grid;
+      grid-template-columns: 360px 1fr;
+      gap:28px;
+      backdrop-filter: blur(6px) saturate(120%);
+      
+      /* --- CAMBIOS DE TAMAÑO FIJO --- */
+      height: 650px;      /* 1. Altura fija */
+      align-items: start; /* 2. Alinear contenido arriba */
+    }
+
+    @media (max-width:800px){
+      .card{
+        grid-template-columns: 1fr; 
+        padding:22px;
+        height: 90vh; /* Ajustar altura para móvil */
+        overflow-y: auto; /* Permitir scroll en la tarjeta entera en móvil */
+      }
+    }
+
+    .left{
+      text-align:center;
+      padding:18px;
+    }
+    .photo {
+      width:180px;
+      height:180px;
+      margin:0 auto 14px;
+      border-radius:50%;
+      overflow:hidden;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+      border: 6px solid rgba(255,255,255,0.6);
+      background: linear-gradient(180deg, #fff0, #fff2);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .photo img{width:100%;height:100%;object-fit:cover;display:block}
+
+    .titulo {
+      font-family: "Great Vibes", cursive;
+      font-size:42px;
+      color:var(--accent);
+      margin-bottom:6px;
+      letter-spacing:0.4px;
+    }
+    .sub {
+      font-weight:600;
+      font-size:14px;
+      color:#666;
+    }
+
+    .reasons {
+      padding:8px 12px;
+      
+      /* --- CAMBIOS DE SCROLL --- */
+      height: 100%;       /* 1. Ocupar altura de la celda */
+      overflow-y: auto; /* 2. Scroll si es necesario */
+    }
+    
+    .reason{
+      display:flex;
+      gap:12px;
+      align-items:flex-start;
+      margin-bottom:16px;
+      background:linear-gradient(90deg, rgba(255,255,255,0.6), rgba(255,255,255,0.4));
+      padding:12px;
+      border-radius:12px;
+    }
+    .reason .dot{
+      min-width:44px;
+      height:44px;
+      border-radius:10px;
+      background:linear-gradient(180deg,var(--accent), #ff9cbc);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:white;
+      font-weight:700;
+      font-size:18px;
+      box-shadow: 0 6px 18px rgba(255,107,129,0.18);
+    }
+    .reason p{font-size:15px;line-height:1.38;color:#2a2a2a;font-weight:600}
+
+    .header-note{
+      font-size:13px;color:#6b6b6b;margin-bottom:12px;
+    }
+
+    /* Botones */
+    .cta{
+      margin-top:8px;
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      justify-content: center; /* Centrar botones */
+    }
+    .btn {
+      border:0;
+      padding:10px 14px;
+      border-radius:10px;
+      font-weight:700;
+      cursor:pointer;
+      background:var(--accent);
+      color:white;
+      box-shadow: 0 8px 20px rgba(255,107,129,0.18);
+    }
+    .btn-ghost{
+      background:transparent;
+      border:2px solid rgba(255,107,129,0.12);
+      color:var(--accent);
+      box-shadow: none;
+    }
+
+    /* Pequeños estilos decorativos */
+    .quote {
+      font-style:italic;
+      color:#4a4a4a;
+      font-size:15px;
+      margin-top:6px;
+    }
+
+    footer.credit {
+      font-size:12px;
+      color:#666;
+      margin-top:16px;
+      text-align:right;
+    }
+
+    /* --- ESTILOS MEJORA 4: SCROLLBAR --- */
+    .reasons::-webkit-scrollbar {
+      width: 8px;
+    }
+    .reasons::-webkit-scrollbar-track {
+      background: rgba(0,0,0,0.05);
+      border-radius: 10px;
+    }
+    .reasons::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, var(--accent), #ff9cbc);
+      border-radius: 10px;
+    }
+    .reasons {
+      scrollbar-width: thin;
+      scrollbar-color: var(--accent) rgba(0,0,0,0.05);
+    }
+
+    /* --- ESTILOS MEJORA 1: VENTANA MODAL --- */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 100;
+      display: none; /* Oculto por defecto */
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      animation: fadeIn 0.3s forwards;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 24px 32px;
+      border-radius: 16px;
+      width: min(400px, 90vw);
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+      transform: scale(0.9);
+      animation: popIn 0.3s 0.1s forwards;
+      position: relative;
+    }
+
+    .modal-titulo {
+      font-family: "Great Vibes", cursive;
+      font-size: 36px;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+
+    .modal-content p {
+      font-size: 16px;
+      font-weight: 600;
+      color: #333;
+      line-height: 1.5;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 10px;
+      right: 14px;
+      font-size: 28px;
+      color: #aaa;
+      cursor: pointer;
+      line-height: 1;
+    }
+    .modal-close:hover {
+      color: #333;
+    }
+
+    /* Animaciones Modal */
+    @keyframes fadeIn {
+      to { opacity: 1; }
+    }
+    @keyframes popIn {
+      to { transform: scale(1); }
+    }
+
+  </style>
+</head>
+<body>
+
+  <audio id="musica-fondo" src="/msc/Danny Ocean - Volare (Letra⧸Lyrics).mp3" loop></audio>
+
+  <div class="bg-overlay" aria-hidden="true"></div>
+
+  <div class="hearts" id="hearts" aria-hidden="true"></div>
+
+  <main class="card" role="main" aria-labelledby="tituloPrincipal">
+    
+    <section class="left" aria-label="Foto y saludo">
+     <div class="photo" aria-hidden="false">
+      
+      <img src="/img/kelly.jpg" alt="Foto de nosotros juntos">
+     
+     </div>
+      <div class="titulo" id="tituloPrincipal">Porque te amo</div>
+      <div class="sub">Una lista pequeña que dice mucho 💌</div>
+
+      <div class="cta" role="group" aria-label="Acciones">
+        <button class="btn" onclick="toggleFunny()">Mostrar sorpresa</button>
+        <button id="btn-audio" class="btn btn-ghost" onclick="toggleMusic()">
+          ▶️ Tocar música
+        </button>
+      </div>
+
+      <div class="header-note">Un detalle pensado y hecho con cariño.</div>
+      <div class="quote">"Tú me haces sentir que puedo contra todo."</div>
+      <footer class="credit">Hecho por tu futuro novio para mi futura novia</footer>
+    
+    </section>
+
+    <section class="reasons" aria-label="Razones">
+      <article class="reason">
+        <div class="dot">1</div>
+        <p><strong>Tu risa</strong> — Tu sonrisa ilumina mis días más difíciles y me hace sentir la persona más feliz del mundo.</p>
+      </article>
+
+      <article class="reason">
+        <div class="dot">2</div>
+        <p><strong>Tu forma de ser</strong> — Me encanta cómo piensas, cómo me enseñas cosas nuevas y la emoción con la que hablas de todo lo que te apasiona.</p>
+      </article>
+
+      <article class="reason">
+        <div class="dot">3</div>
+        <p><strong>Tus ojos</strong> — Cada vez que te miro a los ojos, el mundo se detiene. Me pierdo en ellos y olvido todo lo demás.</p>
+      </article>
+
+      <article class="reason">
+        <div class="dot">4</div>
+        <p><strong>Tu compañía</strong> — Cuando estamos juntos, no me importa nada más. Solo pienso en lo afortunado que soy por tenerte a mi lado.</p>
+      </article>
+
+      <article class="reason">
+        <div class="dot">5</div>
+        <p><strong>Tú</strong> — Tu manera de amarme, de cuidarme y de demostrarme tu cariño es lo más lindo que he sentido en mi vida.</p>
+      </article>
+
+      <article class="reason">
+        <div class="dot">6</div>
+        <p><strong>Tus pecas</strong> — Siempre te lo he dicho: tus pecas son una de las cosas más hermosas que existen. Cada una tiene su encanto.</p>
+      </article>
+
+      <article class="reason">
+        <div class="dot">7</div>
+        <p><strong>Tus labios</strong> — Me fascinan tus labios. Cada beso tuyo es como un viaje a otro mundo, un lugar donde solo existimos tú y yo.</p>
+      </article>
+
+      <article class="reason">
+        <div class="dot">8</div>
+        <p><strong>Tu valentía</strong> — Admiro la fuerza que tienes para no rendirte nunca, para seguir adelante sin importar las dificultades.</p>
+      </article>
+
+      <article class="reason">
+        <div class="dot">9</div>
+        <p><strong>Tu cuerpo</strong> — Eres perfecta tal como eres. Si pudieras verte con mis ojos, sabrías que eres la persona más hermosa del mundo.</p>
+      </article>
+
+      <article class="reason">
+        <div class="dot">10</div>
+        <p><strong>Tus detalles</strong> — Cada pequeño gesto tuyo tiene un valor inmenso para mí. Contigo aprendí lo que significa amar de verdad.</p>
+      </article>
+
+      <article class="reason">
+        <div class="dot">11</div>
+        <p><strong>Nuestros planes</strong> — Amo hablar contigo sobre nuestro futuro, nuestros sueños y la vida que queremos construir juntos. Me haces creer que todo es posible.</p>
+      </article>
+
+    </section>
+  </main>
+
+  <div id="modal-sorpresa" class="modal-overlay" onclick="cerrarModal()">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <span class="modal-close" onclick="cerrarModal()">&times;</span>
+      <div class="modal-titulo">Un recordatorio...</div>
+      <p id="modal-mensaje">Aquí irá el mensaje de sorpresa.</p>
+    </div>
+  </div>
+
+
+  <script>
+    /* Genera corazones con posiciones, tamaños y tiempos aleatorios */
+    (function makeHearts(){
+      const container = document.getElementById('hearts');
+      const heartsCount = 16;
+
+      for(let i=0;i<heartsCount;i++){
+        const h = document.createElement('div');
+        h.className = 'heart';
+        h.innerHTML = `
+          <svg viewBox="0 0 24 24" width="100%" height="100%" aria-hidden="true" focusable="false">
+            <path fill="#ff6b81" d="M12 21s-7-4.6-9.3-7.2C-0.6 8.6 4 4 7.5 6.2 9.1 7.3 10 9 12 10s2.9-2.7 4.5-3.8C20 4 24.6 8.6 21.3 13.8 19 16.4 12 21 12 21z"></path>
+          </svg>`;
+        const left = Math.random() * 100; // vw
+        const size = 18 + Math.random()*36; // px
+        const delay = -Math.random()*18; // s
+        const duration = 12 + Math.random()*12;
+
+        h.style.left = left + 'vw';
+        h.style.width = size + 'px';
+        h.style.height = size + 'px';
+        h.style.animationDuration = duration + 's';
+        h.style.animationDelay = delay + 's';
+        h.style.opacity = 0.9 - Math.random()*0.3;
+
+        container.appendChild(h);
+      }
+    })();
+
+    /* --- MEJORA 1: JAVASCRIPT DE LA MODAL --- */
+    const msgs = [
+      "Eres mi pensamiento feliz del día ✨",
+      "Si tuviera que elegir mil veces, te escogería siempre.",
+      "Contigo aprendí que el hogar también puede ser una persona.",
+      "Gracias por ser tú, te amo."
+    ];
+
+    function toggleFunny(){
+      const i = Math.floor(Math.random() * msgs.length);
+      document.getElementById('modal-mensaje').innerText = msgs[i];
+      
+      const modal = document.getElementById('modal-sorpresa');
+      modal.style.display = 'flex';
+      void modal.offsetWidth; // Forzar reflow
+      modal.style.opacity = 1;
+    }
+
+    function cerrarModal(){
+      const modal = document.getElementById('modal-sorpresa');
+      modal.style.opacity = 0;
+      setTimeout(() => {
+        modal.style.display = 'none';
+      }, 300); // Duración de la animación
+    }
+
+    /* --- MEJORA 2: JAVASCRIPT DE LA MÚSICA --- */
+    function toggleMusic() {
+      const audio = document.getElementById('musica-fondo');
+      const btn = document.getElementById('btn-audio');
+      
+      if (audio.paused) {
+        audio.play();
+        btn.innerHTML = '⏸️ Silenciar';
+      } else {
+        audio.pause();
+        btn.innerHTML = '▶️ Tocar música';
+      }
+    }
+
+    /* Función simple para descargar el HTML actual como archivo */
+    function downloadAsHTML(){
+      const html = '<!doctype html>\n' + document.documentElement.outerHTML;
+      const blob = new Blob([html], {type:'text/html;charset=utf-8'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'porque-te-amo.html';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+  </script>
+
+</body>
+</html>
